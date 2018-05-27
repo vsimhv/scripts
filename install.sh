@@ -25,6 +25,7 @@ apt-get install -y sudo \
   sakura \
   zsh \
   open-vm-tools \
+  open-vm-tools-desktop \
   nautilus \
   xserver-xorg \
   xinit \

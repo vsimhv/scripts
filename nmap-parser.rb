@@ -27,13 +27,17 @@ class NmapParser
 
   def search_services
     print_search_summary if (@options[:verbose])
-
     @nmapXml.each_up_host do |host|
       host.each_open_port do |port|
         if (not port.service.nil? and 
             (@options[:service].nil? or port.service.name.include?(@options[:service])) and
             (@options[:port].nil? or port.number == @options[:port]) and
-            (@options[:product].nil? or not port.service.product.nil?)
+            (@options[:product].nil? or
+              (@options[:product].empty? and not port.service.product.nil?) or
+              (not @options[:product].empty? and
+                not port.service.product.nil? and
+                port.service.product.include?(@options[:product]))
+            )
            )
           print_service(host, port)
         end
@@ -65,8 +69,8 @@ class NmapParserOptions
       opts.on("-v", "--verbose") do
         options[:verbose] = true
       end
-      opts.on("-P", "--product [NAME]", "Show only ports with discovered product name") do
-        options[:product] = true
+      opts.on("-P", "--product [NAME]", "Show only ports with discovered product name") do |val|
+        options[:product] = val.nil? ? "" : val
       end
       opts.on("-f", "--file NMAP_XML", String,
               "Nmap XML output file") do |val|

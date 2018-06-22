@@ -14,8 +14,11 @@ class NmapParser
       info
     end
 
-    if (@options[:search])
+    case
+    when @options[:search]
       search_services(@options[:search])
+    when @options[:port]
+      search_ports(@options[:port])
     else
       opened_ports
     end
@@ -41,7 +44,7 @@ class NmapParser
   end
 
   def search_services(search)
-    puts "\nOpened ports matching search: #{search}" if (@options[:verbose])
+    puts "\nHosts with services matching search: #{search}" if (@options[:verbose])
 
     @nmapXml.each_up_host do |host|
       host.each_open_port do |port|
@@ -54,6 +57,21 @@ class NmapParser
       end
     end
   end
+
+  def search_ports(search)
+    puts "\nHosts with opened port #{search}" if (@options[:verbose])
+
+    @nmapXml.each_up_host do |host|
+      host.each_open_port do |port|
+        if (port.number == search)
+          print "#{host.ip}:#{port.number}\t#{port.service}"
+          print "\t#{port.service.product}" unless port.service.nil?
+          puts
+        end
+      end
+    end
+  end
+
 end
 
 class NmapParserOptions
@@ -68,8 +86,11 @@ class NmapParserOptions
       opts.on("-f", "--file NMAP_XML", String, "Nmap XML output file") do |val|
         options[:input] = val
       end
-      opts.on("-s", "--search [SEARCH]", String, "Search string") do |val|
+      opts.on("-s", "--search SEARCH", String, "Search for services with specified name") do |val|
         options[:search] = val
+      end
+      opts.on("-p", "--port NUMBER", Integer, "Search for services with specified port opened") do |val|
+        options[:port] = val
       end
     end.parse!
 

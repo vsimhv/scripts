@@ -3,6 +3,28 @@ require 'nmap/xml'
 require 'optparse'
 
 class NmapParser
+
+  class Matcher
+    def self.ip(ip, host)
+      ip.nil? or host.ip.include?(ip)
+    end
+
+    def self.service(service, port)
+      service.nil? or port.service.name.downcase.include?(service.downcase)
+    end
+
+    def self.port(port_number, port)
+      port_number.nil? or port.number == port_number
+    end
+
+    def self.product(product, port)
+      product.nil? or
+      (product.empty? and not port.service.product.nil?) or
+      (not product.empty? and not port.service.product.nil? and
+        port.service.product.downcase.include?(product.downcase))
+    end
+  end
+
   @nmapXml = nil
   @options = nil
 
@@ -29,17 +51,11 @@ class NmapParser
     print_search_summary if (@options[:verbose])
     @nmapXml.each_up_host do |host|
       host.each_open_port do |port|
-        if (@options[:ip].nil? or host.ip.include?(@options[:ip]))
+        if (Matcher.ip(@options[:ip], host))
           if (not port.service.nil? and 
-              (@options[:service].nil? or
-                port.service.name.downcase.include?(@options[:service].downcase)) and
-              (@options[:port].nil? or port.number == @options[:port]) and
-              (@options[:product].nil? or
-                (@options[:product].empty? and not port.service.product.nil?) or
-                (not @options[:product].empty? and
-                  not port.service.product.nil? and
-                  port.service.product.downcase.include?(@options[:product].downcase))
-              )
+              Matcher.service(@options[:service], port) and
+              Matcher.port(@options[:port], port) and
+              Matcher.product(@options[:product], port)
              )
             print_service(host, port)
           end

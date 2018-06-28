@@ -32,13 +32,13 @@ class NmapParser
         if (@options[:ip].nil? or host.ip.include?(@options[:ip]))
           if (not port.service.nil? and 
               (@options[:service].nil? or
-                port.service.name.include?(@options[:service])) and
+                port.service.name.downcase.include?(@options[:service].downcase)) and
               (@options[:port].nil? or port.number == @options[:port]) and
               (@options[:product].nil? or
                 (@options[:product].empty? and not port.service.product.nil?) or
                 (not @options[:product].empty? and
                   not port.service.product.nil? and
-                  port.service.product.include?(@options[:product]))
+                  port.service.product.downcase.include?(@options[:product].downcase))
               )
              )
             print_service(host, port)

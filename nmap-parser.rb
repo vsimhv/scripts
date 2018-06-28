@@ -29,12 +29,15 @@ class NmapParser
     print_search_summary if (@options[:verbose])
 
     @nmapXml.each_up_host do |host|
-      host.each_open_port do |port|
-        if (not port.service.nil? and 
-            (@options[:service].nil? or port.service.name.include?(@options[:service])) and
-            (@options[:port].nil? or port.number == @options[:port])
-           )
-          print_service(host, port)
+      if (@options[:ip].nil? or host.ip.include?(@options[:ip]))
+        host.each_open_port do |port|
+          if (not port.service.nil? and 
+              (@options[:service].nil? or
+                port.service.name.include?(@options[:service])) and
+              (@options[:port].nil? or port.number == @options[:port])
+             )
+            print_service(host, port)
+          end
         end
       end
     end
@@ -75,6 +78,10 @@ class NmapParserOptions
       opts.on("-p", "--port NUMBER", Integer,
               "Search for services with specified port") do |val|
         options[:port] = val
+      end
+      opts.on("-i", "--ip IP", String,
+              "Search for hosts with specified ip address") do |val|
+        options[:ip] = val
       end
     end.parse!
 

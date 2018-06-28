@@ -68,7 +68,7 @@ class NmapParserOptions
   def self.parse(args)
     options = {}
     OptionParser.new do |opts|
-      opts.banner = "Usage: #{File.basename($0)} NMAP_XML"
+      opts.banner = "Usage: #{File.basename($0)} -f NMAP_XML"
       opts.on("-v", "--verbose") do
         options[:verbose] = true
       end

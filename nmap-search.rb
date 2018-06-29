@@ -11,11 +11,8 @@ class NmapSearch
   class Options
     def self.parse(args)
       options = {}
-      OptionParser.new do |opts|
+      optparse = OptionParser.new do |opts|
         opts.banner = "Usage: #{File.basename($0)} -f NMAP_OUTPUT.xml [OPTIONS]"
-        opts.on("-v", "--verbose") do
-          options[:verbose] = true
-        end
         opts.on("-f", "--file NMAP_XML", String,
                 "Nmap XML output file") do |val|
           options[:input] = val
@@ -36,15 +33,31 @@ class NmapSearch
                 "Search for ports with discovered product name") do |val|
           options[:product] = val.nil? ? "" : val
         end
-      end.parse!
-
-      if (options[:input].nil?)
-        raise "Nmap XML file not specified"
+        opts.on("-v", "--verbose", "Verbose output") do
+          options[:verbose] = true
+        end
+        opts.on("-h", "--help", "Displays help") do
+          puts opts
+          exit
+        end
       end
 
-      unless (File.exist?(options[:input]))
-        raise "Nmap XML file '#{options[:input]}' does not exist!"
+      begin
+        optparse.parse!
+        if options[:input].nil?
+          raise OptionParser::MissingArgument.new("-f")
+        end
+        unless (File.exist?(options[:input]))
+          raise OptionParser::InvalidArgument.new("Nmap XML file does not exist!")
+        end
+      rescue OptionParser::InvalidOption, OptionParser::MissingArgument,
+          OptionParser::InvalidArgument
+        puts $!.to_s
+        puts
+        puts optparse
+        exit
       end
+
       options
     end
   end
@@ -124,8 +137,4 @@ class NmapSearch
   end
 end
 
-begin
-  NmapSearch.new(ARGV)
-rescue Exception => e
-  puts e
-end
+NmapSearch.new(ARGV)

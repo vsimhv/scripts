@@ -1,4 +1,8 @@
 #!/usr/bin/env ruby
+#
+# requirements:
+# gem install ruby-nmap
+#
 require 'nmap/xml'
 require 'optparse'
 

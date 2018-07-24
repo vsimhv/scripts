@@ -68,7 +68,7 @@ class NmapSearch
     end
 
     def self.service(service, port)
-      service.nil? or port.service.name.downcase.include?(service.downcase)
+      service.nil? or (not port.service.nil? and port.service.name.downcase.include?(service.downcase))
     end
 
     def self.port(port_number, port)
@@ -77,9 +77,10 @@ class NmapSearch
 
     def self.product(product, port)
       product.nil? or
+      (not port.service.nil? and (
       (product.empty? and not port.service.product.nil?) or
       (not product.empty? and not port.service.product.nil? and
-        port.service.product.downcase.include?(product.downcase))
+        port.service.product.downcase.include?(product.downcase))))
     end
   end
 
@@ -110,7 +111,7 @@ class NmapSearch
     @nmapXml.each_up_host do |host|
       host.each_open_port do |port|
         if (Matcher.ip(@options[:ip], host))
-          if (not port.service.nil? and 
+          if (
               Matcher.service(@options[:service], port) and
               Matcher.port(@options[:port], port) and
               Matcher.product(@options[:product], port)
@@ -131,9 +132,12 @@ class NmapSearch
 
   def print_service(host, port)
     print "#{host.ip}:#{port.number}"
+    unless port.service.nil?
     print "\t#{port.service.name}"
     print "\t#{port.service.product}"
-    puts  "\t#{port.service.version}"
+    print  "\t#{port.service.version}"
+    end
+    puts
   end
 end
 

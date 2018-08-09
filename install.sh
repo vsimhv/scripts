@@ -40,7 +40,8 @@ apt-get install -y sudo \
   slim \
   ruby \
   aptitude \
-  vim
+  vim \
+  ipcalc
 
 # docker
 apt-get install -y \

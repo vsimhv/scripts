@@ -41,7 +41,8 @@ apt-get install -y sudo \
   ruby \
   aptitude \
   vim \
-  ipcalc
+  ipcalc \
+  socat
 
 # docker
 apt-get install -y \

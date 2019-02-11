@@ -18,28 +18,14 @@ apt-get update && apt-get dist-upgrade -y
 apt-get install -y sudo \
   git \
   screen \
-  i3 \
-  rofi \
-  sakura \
+  vim \
+  aptitude \
   zsh \
-  open-vm-tools \
-  open-vm-tools-desktop \
-  nautilus \
-  xserver-xorg \
-  xinit \
-  maim \
-  slop \
-  zenity \
   man \
   zip \
-  feh \
   net-tools \
   wget \
-  slim \
   ruby \
-  aptitude \
-  vim \
-  ipcalc \
   socat
 
 # docker

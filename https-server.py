@@ -8,7 +8,7 @@ import SocketServer
 import logging
 import ssl
 
-PORT = 443
+PORT = 8443
 
 class GetHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
 

@@ -40,7 +40,8 @@ apt-get install -y sudo \
   aptitude \
   vim \
   ipcalc \
-  socat
+  socat \
+  golang
 
 # docker
 apt-get install -y \

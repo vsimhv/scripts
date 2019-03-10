@@ -37,11 +37,14 @@ apt-get install -y sudo \
   wget \
   slim \
   ruby \
+  ruby-dev \
+  zlib1g-dev \
   aptitude \
   vim \
   ipcalc \
   socat \
-  golang
+  golang \
+  nmap
 
 # docker
 apt-get install -y \

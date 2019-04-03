@@ -22,8 +22,6 @@ apt-get install -y sudo \
   rofi \
   sakura \
   zsh \
-  open-vm-tools \
-  open-vm-tools-desktop \
   nautilus \
   xserver-xorg \
   xinit \
@@ -44,8 +42,20 @@ apt-get install -y sudo \
   ipcalc \
   socat \
   golang \
-  nmap
+  nmap \
+  virt-what
 
+#install tools for hypervisor
+  if [[ $(virt-what |grep virtualbox) -eq 0 ]] ; then
+    echo "vbox detected"
+    apt install -y virtualbox-guest-x11 virtualbox-guest-dkms
+  elif [[ $(virt-what |grep vmware) -eq 0 ]] ; then
+    echo "vmware detected"
+    apt install -y open-vm-tools  open-vm-tools-desktop 
+  else
+    echo "barebone, skipping tools instalation"
+  fi
+ 
 # docker
 apt-get install -y \
      apt-transport-https \
@@ -65,6 +75,22 @@ add-apt-repository \
 apt-get update && apt-get install -y docker-ce
 update-rc.d docker defaults
 
+# add opera repo and install
+add-apt-repository \
+   "deb [arch=amd64] http://deb.opera.com/opera-stable/ \
+    stable \
+    non-free"
+
+wget -O - https://deb.opera.com/archive.key | apt-key add -
+
+apt update 
+apt install -y opera-stable
+
+
+# clean garbage
+apt autoremove -y 
+apt clean all
+
 # enable user namespaces
 
 echo 'kernel.unprivileged_userns_clone=1' > /etc/sysctl.d/00-local-userns.conf
@@ -74,7 +100,7 @@ service procps restart
 usermod -G docker,sudo $user
 
 # create directories
-directories=(files containers work)
+directories=(files containers work projects/linux)
 for dir in ${directories[*]}; do
   mkdir -p /home/$user/$dir
 done

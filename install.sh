@@ -98,7 +98,7 @@ echo 'kernel.unprivileged_userns_clone=1' > /etc/sysctl.d/00-local-userns.conf
 service procps restart
 
 # add $user to groups
-usermod -G docker,sudo $user
+usermod -G docker,sudo -s "/bin/zsh" $user
 
 # create directories
 directories=(files containers work projects/linux)

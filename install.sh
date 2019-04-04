@@ -43,6 +43,7 @@ apt-get install -y sudo \
   socat \
   golang \
   nmap \
+  zsh-theme-powerlevel9k \
   virt-what
 
 #install tools for hypervisor
@@ -105,5 +106,7 @@ for dir in ${directories[*]}; do
   mkdir -p /home/$user/$dir
 done
 
+#install environment
+su - $user -c "$(pwd)/pre.sh"
 chown -R $user:$user /home/$user
 
